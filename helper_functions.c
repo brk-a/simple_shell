@@ -6,13 +6,12 @@
  */
 int str_len(char *str)
 {
-  int i;
+int i;
 
-  if (str == NULL)
-    return (0);
-  for (i = 0; str[i] != '\0'; i++)
-    ;
-  return (i);
+if (str == NULL)
+return (0);
+for (i = 0; str[i] != '\0'; i++)
+return (i);
 }
 
 /**
@@ -21,32 +20,34 @@ int str_len(char *str)
  */
 void double_free(char **to_be_freed)
 {
-  int index;
+int index;
 
-  for (index = 0; to_be_freed[index] != NULL; index++)
-    free(to_be_freed[index]);
-  free(to_be_freed);
+for (index = 0; to_be_freed[index] != NULL; index++)
+free(to_be_freed[index]);
+
+free(to_be_freed);
 }
 
 /**
  * single_free - Will free a n amount of pointers to a string.
  * @n: The number of pointers to free.
- */
+ * Return: void
+*/
 void single_free(int n, ...)
 {
-  int i;
-  char *str;
-  va_list a_list;
+int i;
+char *str;
+va_list a_list;
 
-  va_start(a_list, n);
-  for (i = 0; i < n; i++)
-    {
-      str = va_arg(a_list, char*);
-      if (str == NULL)
-	str = "(nil)";
-      free(str);
-    }
-  va_end(a_list);
+va_start(a_list, n);
+for (i = 0; i < n; i++)
+{
+str = va_arg(a_list, char*);
+if (str == NULL)
+str = "(nil)";
+free(str);
+}
+va_end(a_list);
 }
 
 
@@ -55,14 +56,15 @@ void single_free(int n, ...)
  * @count: A counter keeping track of the number of commands run on the shell.
  * @av: The name of the program running the shell.
  * @command: The specific command not being found.
- */
+ * Return: void
+*/
 void error_printing(char *av, int count, char *command)
 {
-  print_str(av, 1);
-  print_str(": ", 1);
-  print_number(count);
-  print_str(": ", 1);
-  print_str(command, 1);
+print_str(av, 1);
+print_str(": ", 1);
+print_number(count);
+print_str(": ", 1);
+print_str(command, 1);
 }
 
 /**
@@ -70,12 +72,13 @@ void error_printing(char *av, int count, char *command)
  * @av: The name of the program running the shell.
  * @count: Keeps track of how many commands have been entered.
  * @tmp_command: The command that filed.
+ * Return: void
  */
 
 void exec_error(char *av, int count, char *tmp_command)
 {
-  error_printing(av, count, tmp_command);
-  print_str(": ", 1);
-  perror("");
-  exit(1);
+error_printing(av, count, tmp_command);
+print_str(": ", 1);
+perror("");
+exit(1);
 }

@@ -9,59 +9,61 @@
  */
 char *path_finder(char *command)
 {
-  char *str = "PATH";
-  char *constructed;
-  char **path_tokens;
-  int index;
-  char *directory;
+char *str = "PATH";
+char *constructed;
+char **path_tokens;
+int index;
+char *directory;
 
-  index = find_path(str);
-  path_tokens = tokenize_path(index, str);
-  if (path_tokens == NULL)
-    return (NULL);
+index = find_path(str);
+path_tokens = tokenize_path(index, str);
+if (path_tokens == NULL)
+return (NULL);
 
-  directory = search_directories(path_tokens, command);
-  if (directory == NULL)
-    {
-      double_free(path_tokens);
-      return (NULL);
-    }
-
-  constructed = build_path(directory, command);
-  if (constructed == NULL)
-    {
-      double_free(path_tokens);
-      return (NULL);
-    }
-
-  double_free(path_tokens);
-
-  return (constructed);
+directory = search_directories(path_tokens, command);
+if (directory == NULL)
+{
+double_free(path_tokens);
+return (NULL);
 }
+
+constructed = build_path(directory, command);
+if (constructed == NULL)
+{
+double_free(path_tokens);
+return (NULL);
+}
+
+double_free(path_tokens);
+
+return (constructed);
+}
+
 /**
  * find_path - Finds the index of an environmental variable.
  * @str: Environmental variable that needs to be found.
  * Return: Upon success returns the index of the environmental variable.
  * otherwise returns -1.
  */
+
 int find_path(char *str)
 {
-  int i;
-  int len;
-  int j;
+int i;
+int len;
+int j;
 
-  len = str_len(str);
-  for (i = 0; environ[i] != NULL; i++)
-    {
-      for (j = 0; j < len; j++)
-	{
-	  if (environ[i][j] != str[j])
-	    break;
-	}
-      if (j == len && environ[i][j] == '=')
-	return (i);
-    }
-  return (-1);
+len = str_len(str);
+for (i = 0; environ[i] != NULL; i++)
+{
+for (j = 0; j < len; j++)
+{
+if (environ[i][j] != str[j])
+break;
+}
+if (j == len && environ[i][j] == '=')
+return (i);
+}
+return (-1);
 }
 
 /**
@@ -73,23 +75,23 @@ int find_path(char *str)
  * Otherwise returns NULL. Note!: Do not forget to free alocated
  * memory on receiving function or when possible.
  */
+
 char **tokenize_path(int index, char *str)
 {
-  char *env_var;
-  int token_count;
-  const char *delim = ":\n";
-  char **path_tokens;
-  int len;
+char *env_var;
+int token_count;
+const char *delim = ":\n";
+char **path_tokens;
+int len;
 
-  len = str_len(str);
-  token_count = 0;
-  /*Moving the pointer len of str plus = sign*/
-  env_var = environ[index] + (len + 1);
-  path_tokens = token_interface(env_var, delim, token_count);
-  if (path_tokens == NULL)
-    return (NULL);
+len = str_len(str);
+token_count = 0;
+env_var = environ[index] + (len + 1);
+path_tokens = token_interface(env_var, delim, token_count);
+if (path_tokens == NULL)
+return (NULL);
 
-  return (path_tokens);
+return (path_tokens);
 }
 
 /**
@@ -103,38 +105,38 @@ char **tokenize_path(int index, char *str)
  */
 char *search_directories(char **path_tokens, char *command)
 {
-  int i, s;
-  char *cwd;
-  char *buf;
-  size_t size;
-  struct stat stat_buf;
+int i, s;
+char *cwd;
+char *buf;
+size_t size;
+struct stat stat_buf;
 
-  buf = NULL;
-  size = 0;
-  cwd = getcwd(buf, size);
-  if (cwd == NULL)
-    return (NULL);
-  if (command[0] == '/')
-    command = command + 1;
-  for (i = 0; path_tokens[i] != NULL; i++)
-    {
-      s = chdir(path_tokens[i]);
-      if (s == -1)
-	{
-	  perror("ERROR!");
-	  return (NULL);
-	}
-      s = stat(command, &stat_buf);
-      if (s == 0)
-	{
-	  chdir(cwd);
-	  free(cwd);
-	  return (path_tokens[i]);
-	}
-    }
-  chdir(cwd);
-  free(cwd);
-  return (NULL);
+buf = NULL;
+size = 0;
+cwd = getcwd(buf, size);
+if (cwd == NULL)
+return (NULL);
+if (command[0] == '/')
+command = command + 1;
+for (i = 0; path_tokens[i] != NULL; i++)
+{
+s = chdir(path_tokens[i]);
+if (s == -1)
+{
+perror("ERROR!");
+return (NULL);
+}
+s = stat(command, &stat_buf);
+if (s == 0)
+{
+chdir(cwd);
+free(cwd);
+return (path_tokens[i]);
+}
+}
+chdir(cwd);
+free(cwd);
+return (NULL);
 }
 
 /**
@@ -147,31 +149,31 @@ char *search_directories(char **path_tokens, char *command)
  */
 char *build_path(char *directory, char *command)
 {
-  int i, j;
-  int dir_len;
-  int command_len;
-  int len;
-  char *built;
+int i, j;
+int dir_len;
+int command_len;
+int len;
+char *built;
 
-  if (directory == NULL || command == NULL)
-    return (NULL);
-  dir_len = str_len(directory) + 1;
-  command_len = str_len(command) + 1;
-  len = dir_len + command_len;
+if (directory == NULL || command == NULL)
+return (NULL);
+dir_len = str_len(directory) + 1;
+command_len = str_len(command) + 1;
+len = dir_len + command_len;
 
-  built = malloc(sizeof(char) * len);
-  if (built == NULL)
-    return (NULL);
+built = malloc(sizeof(char) * len);
+if (built == NULL)
+return (NULL);
 
-  for (i = 0; i < len; i++)
-    {
-      for (j = 0; directory[j] != '\0'; j++, i++)
-	built[i] = directory[j];
-      built[i] = '/';
-      i++;
-      for (j = 0; command[j] != '\0'; j++, i++)
-	built[i] = command[j];
-    }
-  built[--i] = '\0';
-  return (built);
+for (i = 0; i < len; i++)
+{
+for (j = 0; directory[j] != '\0'; j++, i++)
+built[i] = directory[j];
+built[i] = '/';
+i++;
+for (j = 0; command[j] != '\0'; j++, i++)
+built[i] = command[j];
+}
+built[--i] = '\0';
+return (built);
 }

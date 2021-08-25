@@ -17,13 +17,13 @@
 
 /**
  * struct builtin_d - Defines the builtins functions.
- * @built: The name of the build in command.
- * @f: A pointer to the right builtin function.
+ * @built: The name of the built-in command.
+ * @f: A pointer to the right built-in function.
  */
 typedef struct builtin_d
 {
-  char *built;
-  void (*f)(char *);
+char *built;
+void (*f)(char *);
 } builtin_t;
 
 extern char **environ;
